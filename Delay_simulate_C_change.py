@@ -68,7 +68,7 @@ frame = Frame(const.miu, True, const.BW)
 
 
 # we have 12 subcarrier per prb so 50% BW
-n_subcar = 6 * frame.Maxnprb()
+n_subcar = 6 * frame.max_prb_count
 
 
 C_percent = 0.1

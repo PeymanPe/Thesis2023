@@ -88,7 +88,7 @@ for k in range(len(mu2)):
 
             p = Frame(k, True, 20)
             # p = Frame(1, True, 20)
-            n_subcar_max = 12 * p.Maxnprb()
+            n_subcar_max = 12 * p.max_prb_count
 
             ll2 = DelayChangeBW(p, math.floor(x1[i] * n_subcar_max), C_percent[j], const)
             # oc1[i,j,k] = ll2[2]

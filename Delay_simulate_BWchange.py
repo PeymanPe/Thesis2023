@@ -68,7 +68,7 @@ const= Constants()
 frame = Frame(const.miu, True, const.BW)
 
 
-n_subcar_max = 12 * frame.Maxnprb()
+n_subcar_max = 12 * frame.max_prb_count
 
 # what percent of DUs allocated for a service
 C_percent = 1

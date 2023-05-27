@@ -77,7 +77,7 @@ y2 = np.empty([len(x2),3])
 for i in range(3):
     for j in range(len(x2)):
         p = Frame(i, True, 20)
-        x3= x2[j] * 12 * p.Maxnprb()
+        x3= x2[j] * 12 * p.max_prb_count
         y2[j,i]= DelayChangeBW(p,x3,const)[3]
 
 

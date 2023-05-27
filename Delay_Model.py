@@ -31,7 +31,7 @@ def Dtot(const, Nsc, frame, cj, cRUEq, cCCEq):
     Tslot = frame.slot_duration
 
 
-    SampleRate = frame.SampleRate
+    SampleRate = frame.sample_rate
 
     # switching delay (unit:microsecond)
     Dse = const.packet_size_bits / const.SwitchBitRate

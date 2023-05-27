@@ -77,7 +77,7 @@ user = 5
 sp = 1
 
 # number of allocated subcarriers
-n_subcar = math.floor(sp * 12 * p.Maxnprb())
+n_subcar = math.floor(sp * 12 * p.max_prb_count)
 
 
 # BW = n_subcar * p.subcarSpace
@@ -143,7 +143,7 @@ def DelayChangeBW(p, n_subcar, C_percent, Lf2):
 # percentage of BW allocation for a service
 sp = 1
 
-n_subcar_max = 12 * p.Maxnprb()
+n_subcar_max = 12 * p.max_prb_count
 
 # print(n_subcar_max)
 
