@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 
-class Frame(object):
+class Frame:
     def __init__(self, mu, is_FR_one, BW):
         # PRB2.JPG at Google drive- Mydrive- Master Program- Thesis- PRB
         # First raw  shows Bandwidtht in MHz (channel)
@@ -64,7 +64,12 @@ class Frame(object):
     def mu(self):
         return self._mu
     @mu.setter
-    def mu(self,mu):
+    def mu(self, mu):
+        self._subcarrier_spacing = None
+        self._slot_duration = None
+        self._symbol_duration = None
+        self._slot_in_frame_count = None
+        self._max_prb_count = None
         self._mu = mu
 
     @property
@@ -81,8 +86,15 @@ class Frame(object):
     def BW(self,BW):
         if BW not in [5,10,15,20,25,30,40,50,60,70,80,90,100]:
             raise AttributeError("not valid bandwidth is selected")
+        self._max_prb_count = None
+        self._sample_rate = None
         self._BW = BW
 
 
+
+
+
 frame = Frame(0, True, 30)
-print(frame.sample_rate)
+
+print(frame.slot_in_frame_count)
+

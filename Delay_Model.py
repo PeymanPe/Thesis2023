@@ -9,13 +9,13 @@ import math
 # required bitrate for fronthaul
 def MHbitRate(Nsc, Ts,const, SampleRate):
     if const.split == 9: #splitting at II_D (unit Mbps)
-        MH = Nsc * 0.9 * 2 * const.Nbits * const.Nant * const.prb_usage / Ts
+        MH = Nsc * 0.9 * 2 * const.bits_per_sample * const.antennas_per_ru * const.prb_usage / Ts
     elif const.split ==0: # splitting at E
 
         # fs=1/Ts
         fs = SampleRate
         # fs =1.536*BW
-        MH = fs * 2 * const.Nbits * const.Nant
+        MH = fs * 2 * const.bits_per_sample * const.antennas_per_ru
     elif const.split ==15:
         MH = 151
     return MH
@@ -62,17 +62,17 @@ def Dtot(const, Nsc, frame, cj, cRUEq, cCCEq):
     # print(MHbitRate1)
 
     # Transmission delay (unit:microsecond)
-    DMtx = const.Lf / MHbitRate1
+    DMtx = const.file_size / MHbitRate1
 
     # print(DMtx)
 
-    Nsc_user = math.floor(Nsc/const.user)
+    Nsc_user = math.floor(Nsc/const.user_count)
 
     nprb = Nsc/12
 
 
 
-    Nslot = math.ceil(const.Lf*1000 / (Nsc_user * const.nmod * const.nsymbol))
+    Nslot = math.ceil(const.file_size*1000 / (Nsc_user * const.nmod * const.nsymbol))
 
 
 
@@ -124,7 +124,7 @@ def Dtot(const, Nsc, frame, cj, cRUEq, cCCEq):
         n2 = 1
         # Equation 7 (unit miliseconds)
 
-        dRUpr = C_i_RU_CP / cRUEq[0] + (C_i_RU_UP*const.user) / cRUEq[1]
+        dRUpr = C_i_RU_CP / cRUEq[0] + (C_i_RU_UP*const.user_count) / cRUEq[1]
         dCCpr = C_i_CC_UP / cCCEq[1]
 
 
@@ -146,7 +146,7 @@ def Dtot(const, Nsc, frame, cj, cRUEq, cCCEq):
     Dpr = n1 * dCCpr + n2 * dRUpr
 
     # # equation 1 (unit milisecond)
-    Dtot = DMtx  + const.Dp1 * 0.001 + DRtx  + Dpr + const.Nsw * (
+    Dtot = DMtx  + const.Dp1 * 0.001 + DRtx  + Dpr + const.switch_count * (
                 const.Dq * 0.001 + const.Df * 0.001 + Dse * 0.001) + \
            const.Dp2 * 0.001 + const.D_w
 

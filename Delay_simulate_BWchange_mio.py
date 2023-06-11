@@ -13,7 +13,7 @@ def DelayChangeBW(p, n_subcar,const):
     # number of radio units
 
     BW = (n_subcar * p.subcarrier_spacing)/1000
-    n_subcar_user = math.floor(n_subcar/const.user)
+    n_subcar_user = math.floor(n_subcar/const.user_count)
     BW_user = (n_subcar_user * p.subcarrier_spacing)/1000
 
 
@@ -50,7 +50,7 @@ def DelayChangeBW(p, n_subcar,const):
         ceq_CC2 = np.array([1-frac_CC, frac_CC]) * const.ceq_CC
         ceq_RU2 = np.array([1, 0])*const.ceq_RU
     elif const.split == 11:
-        frac_RU = (cj[-5]*const.user)/(cj[-5] * const.user + np.sum(cj[:-5]))
+        frac_RU = (cj[-5]*const.user_count)/(cj[-5] * const.user_count + np.sum(cj[:-5]))
         ceq_RU2 = np.array([1-frac_RU, frac_RU]) * const.ceq_RU
         ceq_CC2 = np.array([0, 1]) * const.ceq_CC
 

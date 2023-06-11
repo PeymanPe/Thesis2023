@@ -13,14 +13,14 @@ from Constants import Constants
 def DelayChangeBW(p, n_subcar, C_percent, const):
 
     BW = (n_subcar * p.subcarrier_spacing) / 1000
-    n_subcar_user = math.floor(n_subcar / const.user)
+    n_subcar_user = math.floor(n_subcar / const.user_count)
     BW_user = (n_subcar_user * p.subcarrier_spacing) / 1000
 
-    actualvalue = np.array([BW, const.nmod, const.Nant, 6, 1])
+    actualvalue = np.array([BW, const.nmod, const.antennas_per_ru, 6, 1])
 
     actToRef = actualvalue / const.refvalue
 
-    actualvalue_user = np.array([BW_user, const.nmod, const.Nant, 6, 1])
+    actualvalue_user = np.array([BW_user, const.nmod, const.antennas_per_ru, 6, 1])
     # actToRefUser = actToRef.copy()
     # we assume we allocate equally to each user
     actToRefUser = actualvalue_user / const.refvalue
@@ -51,11 +51,11 @@ def DelayChangeBW(p, n_subcar, C_percent, const):
         ceq_RU2 = np.array([1, 0]) * const.ceq_RU * C_percent
 
     elif const.split == 11:
-        frac_RU = (cj[-5] * const.user) / (cj[-5] * const.user + np.sum(cj[:-5]))
+        frac_RU = (cj[-5] * const.user_count) / (cj[-5] * const.user_count + np.sum(cj[:-5]))
         ceq_RU2 = np.array([1 - frac_RU, frac_RU]) * const.ceq_RU
         ceq_CC2 = np.array([0, 1]) * const.ceq_CC * C_percent
     elif const.split == 0:
-        frac_CC = ((np.sum(cj[11:-2])+cj[-1]) * const.user * const.ru) / ((np.sum(cj[11:-2])+cj[-1]) * const.user * const.ru + (np.sum(cj[:11])+cj[-2]))* const.ru
+        frac_CC = ((np.sum(cj[11:-2])+cj[-1]) * const.user_count * const.ru_count) / ((np.sum(cj[11:-2])+cj[-1]) * const.user_count * const.ru + (np.sum(cj[:11])+cj[-2])) * const.ru_count
         ceq_CC2 = np.array([1 - frac_CC, frac_CC]) * const.ceq_CC
         ceq_RU2 = np.array([0, 0]) * const.ceq_RU * C_percent
 
