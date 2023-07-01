@@ -2,7 +2,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 from frame import Frame
-from Delay_Model import Dtot
+from Delay_Model import Total_Delay_Calculator
 from Constants import Constants
 import pandas as pd
 
@@ -15,11 +15,11 @@ def DelayChangeBW(p, n_subcar, C_percent,const):
     n_subcar_user = math.floor(n_subcar / const.user_count)
     BW_user = (n_subcar_user * p.subcarrier_spacing) / 1000
 
-    actualvalue = np.array([BW, const.nmod, 1, 6, 1])
+    actualvalue = np.array([BW, const.modulation_index, 1, 6, 1])
 
     actToRef = actualvalue / const.refvalue
 
-    actualvalue_user = np.array([BW_user, const.nmod, 1, 6, 1])
+    actualvalue_user = np.array([BW_user, const.modulation_index, 1, 6, 1])
     # actToRefUser = actToRef.copy()
     # we assume we allocate equally to each user
     actToRefUser = actualvalue_user / const.refvalue
@@ -53,7 +53,7 @@ def DelayChangeBW(p, n_subcar, C_percent,const):
         ceq_CC2 = np.array([0, 1]) * const.ceq_CC * C_percent
 
 
-    dd = Dtot(const, n_subcar, p, cj, ceq_RU2, ceq_CC2)
+    dd = Total_Delay_Calculator(const, n_subcar, p, cj, ceq_RU2, ceq_CC2)
 
     return dd[2], dd[-1]
 

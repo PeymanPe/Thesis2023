@@ -2,7 +2,7 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 from frame import Frame
-from Delay_Model import Dtot
+from Delay_Model import Total_Delay_Calculator
 from Constants import Constants
 
 
@@ -13,11 +13,11 @@ def DelayChangeBW(p, n_subcar, C_percent, const):
     n_subcar_user = math.floor(n_subcar / const.user_count)
     BW_user = (n_subcar_user * p.subcarrier_spacing) / 1000 #unit in MHz
 
-    actualvalue = np.array([BW, const.nmod, const.antennas_per_ru, 6, 1])
+    actualvalue = np.array([BW, const.modulation_index, const.antennas_per_ru, 6, 1])
 
     actToRef = actualvalue / const.refvalue
 
-    actualvalue_user = np.array([BW_user, const.nmod, const.antennas_per_ru, 6, 1])
+    actualvalue_user = np.array([BW_user, const.modulation_index, const.antennas_per_ru, 6, 1])
     # actToRefUser = actToRef.copy()
     # we assume we allocate equally to each user
     actToRefUser = actualvalue_user / const.refvalue
@@ -56,7 +56,7 @@ def DelayChangeBW(p, n_subcar, C_percent, const):
         ceq_CC2 = np.array([1 - frac_CC, frac_CC]) * const.ceq_CC
         ceq_RU2 = np.array([0, 0]) * const.ceq_RU * C_percent
 
-    dd = Dtot(const, n_subcar, p, cj, ceq_RU2, ceq_CC2)
+    dd = Total_Delay_Calculator(const, n_subcar, p, cj, ceq_RU2, ceq_CC2)
     # Dtot(Lf, packetsize, SwitchBitRate, Nsc, nre, nmod, Tslot, cj, cRUEq, cCCEq, split, Nant, nn, nsymbol, user)
     return dd[0], dd[1], dd[2], dd[3], dd[4], cj
 

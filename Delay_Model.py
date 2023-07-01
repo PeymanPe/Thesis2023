@@ -7,7 +7,7 @@ import math
 
 
 # required bitrate for fronthaul
-def MHbitRate(Nsc, Ts,const, SampleRate):
+def Fronthaul_bit_rate_calculater(Nsc, Ts,const, SampleRate):
     if const.split == 9: #splitting at II_D (unit Mbps)
         MH = Nsc * 0.9 * 2 * const.bits_per_sample * const.antennas_per_ru * const.prb_usage / Ts
     elif const.split ==0: # splitting at E
@@ -20,13 +20,11 @@ def MHbitRate(Nsc, Ts,const, SampleRate):
         MH = 151
     return MH
 
-def Ceq(NCPU,f,Ncores,Nipc):
-    ceq1 = NCPU * f * Ncores * Nipc
-    return ceq1
+
 
 
 #return in ms unit
-def Dtot(const, Nsc, frame, cj, cRUEq, cCCEq):
+def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
 
     Tslot = frame.slot_duration
 
@@ -34,7 +32,7 @@ def Dtot(const, Nsc, frame, cj, cRUEq, cCCEq):
     SampleRate = frame.sample_rate
 
     # switching delay (unit:microsecond)
-    Dse = const.packet_size_bits / const.SwitchBitRate
+    Dse = const.packet_size_bits / const.switch_bit_rate
 
 
 
@@ -47,12 +45,12 @@ def Dtot(const, Nsc, frame, cj, cRUEq, cCCEq):
     # Ts = Tslot/const.nsymbol
     ##to be more accurate (micro seconds)
     Ts = frame.symbol_duration
-    MHbitRate1 = MHbitRate(Nsc, Ts, const, SampleRate)
+    MHbitRate1 = Fronthaul_bit_rate_calculater(Nsc, Ts, const, SampleRate)
 
     # MHbitRate1 = MHbitRate(Nsc, Ts, nn, split,Nant,nmod)
     # queuing delay
     EP = const.packet_size_bits/MHbitRate1
-    L_phi = Nsc * const.nmod * 1.04
+    L_phi = Nsc * const.modulation_index * 1.04
     ro = EP * L_phi/const.packet_size_bits
     kk = ro/(1-ro)
     # zz = math.log(kk)/math.log(math.e)
@@ -72,7 +70,7 @@ def Dtot(const, Nsc, frame, cj, cRUEq, cCCEq):
 
 
 
-    Nslot = math.ceil(const.file_size*1000 / (Nsc_user * const.nmod * const.nsymbol))
+    Nslot = math.ceil(const.file_size*1000 / (Nsc_user * const.modulation_index * const.nsymbol))
 
 
 
@@ -146,9 +144,9 @@ def Dtot(const, Nsc, frame, cj, cRUEq, cCCEq):
     Dpr = n1 * dCCpr + n2 * dRUpr
 
     # # equation 1 (unit milisecond)
-    Dtot = DMtx  + const.Dp1 * 0.001 + DRtx  + Dpr + const.switch_count * (
-                const.Dq * 0.001 + const.Df * 0.001 + Dse * 0.001) + \
-           const.Dp2 * 0.001 + const.D_w
+    Dtot = DMtx  + const.propagation_delay_fronthaul * 0.001 + DRtx  + Dpr + const.switch_count * (
+                const.queue_delay * 0.001 + const.delay_fabric * 0.001 + Dse * 0.001) + \
+           const.propagation_delay_RAN * 0.001 + const.slice_instantiation_delay
 
     # # equation 1 (unit milisecond)
     # Dtot = DMtx * 0.001 + const.Dp1 * 0.001 + DRtx + Dpr + const.Nsw * (const.Dq * 0.001 + const.Df * 0.001 + Dse * 0.001) + \

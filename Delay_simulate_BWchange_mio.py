@@ -3,7 +3,7 @@ import math
 import matplotlib.pyplot as plt
 from frame import Frame
 
-from Delay_Model import Dtot
+from Delay_Model import Total_Delay_Calculator
 from Constants import Constants
 
 
@@ -18,11 +18,11 @@ def DelayChangeBW(p, n_subcar,const):
 
 
 
-    actualvalue = np.array([BW, const.nmod, 2, 6, 1])
+    actualvalue = np.array([BW, const.modulation_index, 2, 6, 1])
 
     actToRef = actualvalue / const.refvalue
 
-    actualvalue_user = np.array([BW_user, const.nmod, 2, 6, 1])
+    actualvalue_user = np.array([BW_user, const.modulation_index, 2, 6, 1])
     # actToRefUser = actToRef.copy()
     # we assume we allocate equally to each user
     actToRefUser = actualvalue_user / const.refvalue
@@ -56,7 +56,7 @@ def DelayChangeBW(p, n_subcar,const):
 
     # dd = Dtot(Lf, packetsize, SwitchBitRate, n_subcar, nre, nmod, p.Tslot, cj, ceq_RU2, ceq_CC2, split, Nant, nn, nsymbol,
     #           user,ru)
-    dd = Dtot(const, n_subcar, p, cj,ceq_RU2, ceq_CC2)
+    dd = Total_Delay_Calculator(const, n_subcar, p, cj,ceq_RU2, ceq_CC2)
 
     return dd[0], dd[1], dd[2], dd[3], dd[4], cj
 
