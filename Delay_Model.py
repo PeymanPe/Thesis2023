@@ -8,9 +8,9 @@ import math
 
 # required bitrate for fronthaul
 def Fronthaul_bit_rate_calculater(Nsc, Ts,const, SampleRate):
-    if const.split == 9: #splitting at II_D (unit Mbps)
+    if const.split == 'IID': #splitting at II_D (unit Mbps)
         MH = Nsc * 0.9 * 2 * const.bits_per_sample * const.antennas_per_ru * const.prb_usage / Ts
-    elif const.split ==0: # splitting at E
+    elif const.split == 'E': # splitting at E
 
         # fs=1/Ts
         fs = SampleRate
@@ -79,7 +79,7 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
 
     #equation 23 (unit giga operation per radio subframe
     #we have 16 total number of CP and UP functions
-    if const.split == 0: #splitting at E
+    if const.split == 'E': #splitting at E
         C_i_RU = 0
         C_i_CC_CP = np.sum(cj[:11])+cj[-2]
         C_i_CC_UP = np.sum(cj[11:-2])+cj[-1]
@@ -92,7 +92,7 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
         n2 = 0
         n1 = 1
 
-    elif const.split == 9: #spliting for II_D
+    elif const.split == 'IID': #spliting for II_D
         C_i_RU_CP = np.sum(cj[:11])
         C_i_CC_CP = cj[-2]
         C_i_CC_UP = np.sum(cj[11:-2])+cj[-1]

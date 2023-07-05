@@ -24,7 +24,8 @@ class Constants:
         # number of resources elements per PRB
         self.nre = 12 * self.nsymbol
         # splitting II_D
-        self.split = 9
+        self.split = 'IID'
+        # self.split = 9
         # splitting E
         #self.split = 0
         # 4 RU
