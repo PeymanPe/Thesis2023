@@ -155,7 +155,7 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
     # Dtot =  DMtx * 0.001 +  const.Dp1 * 0.001 +  DRtx + Dpr * Nslot+  const.Nsw * (const.Dq * 0.001 + const.Df * 0.001 + Dse * 0.001) + \
     #          const.Dp2 * 0.001 + const.D_w
 
-    return dRUpr, dCCpr, Dpr , Dtot, DRtx
+    return dRUpr, dCCpr, Dpr , Dtot, DRtx 
     #revised processing equation
     # return dRUpr, dCCpr, Dpr * Nslot, Dtot, DRtx
     #Process delay simulation in process_Delay.py

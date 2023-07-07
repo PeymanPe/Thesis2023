@@ -48,7 +48,7 @@ def DelayChangeBW(frame, n_subcar, C_percent, const, modulation_idx):
         ceq_CC2 = np.array([1 - frac_CC, frac_CC]) * const.ceq_CC
         ceq_RU2 = np.array([1, 0]) * const.ceq_RU * C_percent
 
-    elif const.split == 'ID':
+    elif const.split == 11:
         frac_RU = (cj[-5] * const.user_count) / (cj[-5] * const.user_count + np.sum(cj[:-5]))
         ceq_RU2 = np.array([1 - frac_RU, frac_RU]) * const.ceq_RU
         ceq_CC2 = np.array([0, 1]) * const.ceq_CC * C_percent
@@ -57,15 +57,18 @@ def DelayChangeBW(frame, n_subcar, C_percent, const, modulation_idx):
         ceq_CC2 = np.array([1 - frac_CC, frac_CC]) * const.ceq_CC
         ceq_RU2 = np.array([0, 0]) * const.ceq_RU * C_percent
 
-    dd = Total_Delay_Calculator(const, n_subcar, frame, cj, ceq_RU2, ceq_CC2)
-    # Dtot(Lf, packetsize, SwitchBitRate, Nsc, nre, nmod, Tslot, cj, cRUEq, cCCEq, split, Nant, nn, nsymbol, user)
-    return dd[3]
-    # dd[0], dd[1], dd[2], dd[3], dd[4], cj
+    total_delay = Total_Delay_Calculator(const, n_subcar, frame, cj, ceq_RU2, ceq_CC2)[3]
+
+    return total_delay
+
 
 
 
 const= Constants()
-frame = Frame(const.mu, True, const.BW)
+numerology=0
+bandwidth =20
+frame = Frame(numerology, True, bandwidth)
+# frame = Frame(const.mu, True, const.BW)
 
 
 # we have 12 subcarrier per prb so 50% BW
@@ -80,10 +83,14 @@ x2=np.array(["{:.0%}".format(i) for i in x1])
 
 y1 = np.empty([len(x1), 4])
 for i in range(len(x1)):
-    y1[i, 0] = DelayChangeBW(frame, n_subcar, x1[i], const,2)
-    y1[i, 1] = DelayChangeBW(frame, n_subcar, x1[i], const, 4)
-    y1[i, 2] = DelayChangeBW(frame, n_subcar, x1[i], const, 6)
-    y1[i, 3] = DelayChangeBW(frame, n_subcar, x1[i], const, 8)
+    const.modulation_index =2
+    y1[i, 0] = DelayChangeBW(frame, n_subcar, x1[i], const,const.modulation_index)
+    const.modulation_index = 4
+    y1[i, 1] = DelayChangeBW(frame, n_subcar, x1[i], const, const.modulation_index)
+    const.modulation_index = 6
+    y1[i, 2] = DelayChangeBW(frame, n_subcar, x1[i], const, const.modulation_index)
+    const.modulation_index = 8
+    y1[i, 3] = DelayChangeBW(frame, n_subcar, x1[i], const, const.modulation_index)
     # y1[i, :] = DelayChangeBW(p, math.floor(n_subcar_max/2), x1[i], Lf)[:-1]
     # print(x1[i])
 
@@ -98,7 +105,7 @@ ax.plot(x2, y1[:, 3], 'o-b')
 # ax.text(3.5, 1.25, 'processing time threshold', fontsize=8, color='r')
 
 ax.set_title(
-    "Delay components with varying allocated digital units for a slice, miu=0 File size=5 KB with slice containing 5 users and slice BW is half of channel BW ")
+    "Delay components with varying allocated digital units for a slice, miu=0 File size=5 KB with slice\n containing 5 users and slice BW is half of channel BW and fully loaded ")
 
 ax.set(xlabel='Virtual machine limit(percentage) for the slice', ylabel='Total delay (ms)')
 ax.legend(('QPSK', '16QAM', '64QAM','256QAM'), loc='upper right', shadow=True)
@@ -106,8 +113,7 @@ ax.legend(('QPSK', '16QAM', '64QAM','256QAM'), loc='upper right', shadow=True)
 minor_ticks = np.arange(0, 9, 0.1)
 major_ticks = np.arange(0, 9, 0.5)
 
-# minor_ticks2 = np.arange(x2[0], x2[-1], x2[1]-x2[0])
-# major_ticks2 = np.arange(x2[0], x2[-1], x2[3]-x2[0])
+
 
 ax.set_yticks(minor_ticks, minor=True)
 ax.set_yticks(major_ticks)
@@ -118,6 +124,7 @@ ax.set_yticks(major_ticks)
 # ax.grid(which='both')
 ax.grid(which='minor', alpha=0.2)
 ax.grid(which='major', alpha=0.5)
+plt.setp(plt.gca(),ylim=(2,9))
 plt.xlim([0, 29])
-print(const.dff)
+
 plt.show()

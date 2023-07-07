@@ -83,10 +83,14 @@ x2=np.array(["{:.0%}".format(i) for i in x1])
 
 y1 = np.empty([len(x1), 4])
 for i in range(len(x1)):
-    y1[i, 0] = DelayChangeBW(frame, n_subcar, x1[i], const,2)
-    y1[i, 1] = DelayChangeBW(frame, n_subcar, x1[i], const, 4)
-    y1[i, 2] = DelayChangeBW(frame, n_subcar, x1[i], const, 6)
-    y1[i, 3] = DelayChangeBW(frame, n_subcar, x1[i], const, 8)
+    const.modulation_index =2
+    y1[i, 0] = DelayChangeBW(frame, n_subcar, x1[i], const,const.modulation_index)
+    const.modulation_index = 4
+    y1[i, 1] = DelayChangeBW(frame, n_subcar, x1[i], const, const.modulation_index)
+    const.modulation_index = 6
+    y1[i, 2] = DelayChangeBW(frame, n_subcar, x1[i], const, const.modulation_index)
+    const.modulation_index = 8
+    y1[i, 3] = DelayChangeBW(frame, n_subcar, x1[i], const, const.modulation_index)
     # y1[i, :] = DelayChangeBW(p, math.floor(n_subcar_max/2), x1[i], Lf)[:-1]
     # print(x1[i])
 
@@ -109,8 +113,7 @@ ax.legend(('QPSK', '16QAM', '64QAM','256QAM'), loc='upper right', shadow=True)
 minor_ticks = np.arange(0, 9, 0.1)
 major_ticks = np.arange(0, 9, 0.5)
 
-# minor_ticks2 = np.arange(x2[0], x2[-1], x2[1]-x2[0])
-# major_ticks2 = np.arange(x2[0], x2[-1], x2[3]-x2[0])
+
 
 ax.set_yticks(minor_ticks, minor=True)
 ax.set_yticks(major_ticks)
@@ -121,7 +124,7 @@ ax.set_yticks(major_ticks)
 # ax.grid(which='both')
 ax.grid(which='minor', alpha=0.2)
 ax.grid(which='major', alpha=0.5)
-plt.setp(plt.gca(),ylim=(5,9))
+plt.setp(plt.gca(),ylim=(2,9))
 plt.xlim([0, 29])
 
 plt.show()

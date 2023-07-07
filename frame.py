@@ -94,7 +94,7 @@ class Frame:
 
 
 
-frame = Frame(0, True, 30)
-
-print(frame.slot_in_frame_count)
+# frame = Frame(0, True, 30)
+#
+# print(frame.slot_in_frame_count)
 
