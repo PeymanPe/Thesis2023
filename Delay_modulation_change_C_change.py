@@ -105,7 +105,7 @@ ax.plot(x2, y1[:, 3], 'o-b')
 # ax.text(3.5, 1.25, 'processing time threshold', fontsize=8, color='r')
 
 ax.set_title(
-    "Delay components with varying allocated digital units for a slice, miu=0 File size=5 KB with slice\n containing 5 users and slice BW is half of channel BW and fully loaded ")
+    "Total Delay with varying allocated digital units for a slice, miu=0 File size=5 KB with slice\n containing 5 users and slice BW is half of channel BW and fully loaded ")
 
 ax.set(xlabel='Virtual machine limit(percentage) for the slice', ylabel='Total delay (ms)')
 ax.legend(('QPSK', '16QAM', '64QAM','256QAM'), loc='upper right', shadow=True)

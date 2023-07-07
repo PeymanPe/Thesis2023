@@ -6,7 +6,7 @@ import math
 
 
 
-# required bitrate for fronthaul
+# required bitrate for fronthaul unit: Mbps
 def Fronthaul_bit_rate_calculater(Nsc, Ts,const, SampleRate):
     if const.split == 'IID': #splitting at II_D (unit Mbps)
         MH = Nsc * 0.9 * 2 * const.bits_per_sample * const.antennas_per_ru * const.prb_usage / Ts
@@ -45,6 +45,7 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
     # Ts = Tslot/const.nsymbol
     ##to be more accurate (micro seconds)
     Ts = frame.symbol_duration
+
     MHbitRate1 = Fronthaul_bit_rate_calculater(Nsc, Ts, const, SampleRate)
 
     # MHbitRate1 = MHbitRate(Nsc, Ts, nn, split,Nant,nmod)
@@ -59,8 +60,7 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
 
     # print(MHbitRate1)
 
-    # Transmission delay (unit:microsecond)
-    DMtx = const.file_size / MHbitRate1
+
 
     # print(DMtx)
 
@@ -76,7 +76,10 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
 
     # equation 4 (unit:milisecond)
     DRtx = Nslot * Tslot
-
+    # Transmission delay (unit:microsecond)
+    file_size_per_slot = math.ceil(const.file_size *frame.slot_in_subframe_count / Nslot )
+    print(math.ceil(file_size_per_slot / (MHbitRate1*frame.symbol_duration))*frame.symbol_duration*0.001)
+    DMtx = math.ceil(file_size_per_slot / (MHbitRate1*frame.symbol_duration))*frame.symbol_duration*0.001
     #equation 23 (unit giga operation per radio subframe
     #we have 16 total number of CP and UP functions
     if const.split == 'E': #splitting at E
@@ -141,12 +144,14 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
 
 
     # Equation 6 (unit miliseconds)
-    Dpr = n1 * dCCpr + n2 * dRUpr
+    Delay_process = n1 * dCCpr + n2 * dRUpr
 
     # # equation 1 (unit milisecond)
-    Dtot = DMtx  + const.propagation_delay_fronthaul * 0.001 + DRtx  + Dpr + const.switch_count * (
+    Delay_total = DMtx  + const.propagation_delay_fronthaul * 0.001 + DRtx  + Delay_process + const.switch_count * (
                 const.queue_delay * 0.001 + const.delay_fabric * 0.001 + Dse * 0.001) + \
            const.propagation_delay_RAN * 0.001 + const.slice_instantiation_delay
+    Delay_fronthaul= const.propagation_delay_fronthaul* 0.001 + DMtx + const.switch_count * (
+                const.queue_delay * 0.001 + const.delay_fabric * 0.001 + Dse * 0.001)
 
     # # equation 1 (unit milisecond)
     # Dtot = DMtx * 0.001 + const.Dp1 * 0.001 + DRtx + Dpr + const.Nsw * (const.Dq * 0.001 + const.Df * 0.001 + Dse * 0.001) + \
@@ -155,7 +160,7 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
     # Dtot =  DMtx * 0.001 +  const.Dp1 * 0.001 +  DRtx + Dpr * Nslot+  const.Nsw * (const.Dq * 0.001 + const.Df * 0.001 + Dse * 0.001) + \
     #          const.Dp2 * 0.001 + const.D_w
 
-    return dRUpr, dCCpr, Dpr , Dtot, DRtx 
+    return dRUpr, dCCpr, Delay_process , Delay_total, DRtx, Delay_fronthaul
     #revised processing equation
     # return dRUpr, dCCpr, Dpr * Nslot, Dtot, DRtx
     #Process delay simulation in process_Delay.py
