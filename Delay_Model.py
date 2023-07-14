@@ -77,9 +77,9 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
     # equation 4 (unit:milisecond)
     DRtx = Nslot * Tslot
     # Transmission delay (unit:microsecond)
-    file_size_per_slot = math.ceil(const.file_size *frame.slot_in_subframe_count / Nslot )
-    print(math.ceil(file_size_per_slot / (MHbitRate1*frame.symbol_duration))*frame.symbol_duration*0.001)
-    DMtx = math.ceil(file_size_per_slot / (MHbitRate1*frame.symbol_duration))*frame.symbol_duration*0.001
+    file_size_per_subframe = math.ceil(const.file_size *frame.slot_in_subframe_count / Nslot )
+    # print(math.ceil(file_size_per_slot / (MHbitRate1*frame.symbol_duration))*frame.symbol_duration*0.001)
+    DMtx = math.ceil(file_size_per_subframe / (MHbitRate1*frame.symbol_duration))*frame.symbol_duration*0.001
     #equation 23 (unit giga operation per radio subframe
     #we have 16 total number of CP and UP functions
     if const.split == 'E': #splitting at E
@@ -89,7 +89,7 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
         f = 2.3 *1000
         Tss=(1/f)
         dRUpr = 0
-        dCCpr = math.ceil(C_i_CC_CP * f*Tslot / cCCEq[0]) * (Tss) + math.ceil(C_i_CC_UP * f *Tslot/ cCCEq[1])* (Tss)
+        dCCpr = math.ceil(C_i_CC_CP * f*Tslot*frame.slot_in_subframe_count / cCCEq[0]) * (Tss) + math.ceil(C_i_CC_UP * f *Tslot*frame.slot_in_subframe_count/ cCCEq[1])* (Tss)
 
 
         n2 = 0
@@ -117,7 +117,7 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
 
 
 
-    elif const.split == 11:
+    elif const.split == 'ID':
         C_i_RU_CP = np.sum(cj[:11])
         C_i_RU_UP = cj[11]
         C_i_CC_UP = np.sum(cj[-4:])
@@ -145,6 +145,7 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
 
     # Equation 6 (unit miliseconds)
     Delay_process = n1 * dCCpr + n2 * dRUpr
+    print(Delay_process)
 
     # # equation 1 (unit milisecond)
     Delay_total = DMtx  + const.propagation_delay_fronthaul * 0.001 + DRtx  + Delay_process + const.switch_count * (

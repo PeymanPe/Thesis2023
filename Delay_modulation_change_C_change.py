@@ -45,10 +45,10 @@ def DelayChangeBW(frame, n_subcar, C_percent, const, modulation_idx):
     if const.split == 'IID':
         # frac_CC = (np.sum(cj[-5:])*user*ru)/(np.sum(cj[-5:])*user*ru+cj[-6])
         frac_CC = 0.5
-        ceq_CC2 = np.array([1 - frac_CC, frac_CC]) * const.ceq_CC
+        ceq_CC2 = np.array([1 - frac_CC, frac_CC]) * const.ceq_CC * C_percent #previously c percent was not used
         ceq_RU2 = np.array([1, 0]) * const.ceq_RU * C_percent
 
-    elif const.split == 11:
+    elif const.split == 'ID':
         frac_RU = (cj[-5] * const.user_count) / (cj[-5] * const.user_count + np.sum(cj[:-5]))
         ceq_RU2 = np.array([1 - frac_RU, frac_RU]) * const.ceq_RU
         ceq_CC2 = np.array([0, 1]) * const.ceq_CC * C_percent

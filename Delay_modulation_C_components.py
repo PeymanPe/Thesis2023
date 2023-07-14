@@ -19,8 +19,7 @@ def DelayChangeBW(frame, n_subcar, C_percent, const, modulation_idx):
     actToRef = actualvalue / const.refvalue
 
     actualvalue_user = np.array([BW_user, modulation_idx, const.antennas_per_ru, 6, 1])
-    # actToRefUser = actToRef.copy()
-    # we assume we allocate equally to each user
+
     actToRefUser = actualvalue_user / const.refvalue
 
     dff2 = const.dff[:, 1:]
@@ -48,7 +47,7 @@ def DelayChangeBW(frame, n_subcar, C_percent, const, modulation_idx):
         ceq_CC2 = np.array([1 - frac_CC, frac_CC]) * const.ceq_CC
         ceq_RU2 = np.array([1, 0]) * const.ceq_RU * C_percent
 
-    elif const.split == 11:
+    elif const.split == 'ID':
         frac_RU = (cj[-5] * const.user_count) / (cj[-5] * const.user_count + np.sum(cj[:-5]))
         ceq_RU2 = np.array([1 - frac_RU, frac_RU]) * const.ceq_RU
         ceq_CC2 = np.array([0, 1]) * const.ceq_CC * C_percent
