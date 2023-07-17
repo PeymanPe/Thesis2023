@@ -7,18 +7,21 @@ import math
 
 
 # required bitrate for fronthaul unit: Mbps
-def Fronthaul_bit_rate_calculater(Nsc, Ts,const, SampleRate):
+def Fronthaul_bit_rate_calculater(Nsc, frame,const,bitwidth):
+    SampleRate = frame.sample_rate
+    Ts = frame.symbol_duration
     if const.split == 'IID': #splitting at II_D (unit Mbps)
-        MH = Nsc * 0.9 * 2 * const.bits_per_sample * const.antennas_per_ru * const.prb_usage / Ts
+        # fronthaul_bitrate = Nsc * 0.9 * 2 * const.bits_per_sample * const.antennas_per_ru * const.prb_usage / Ts
+        fronthaul_bitrate = Nsc * frame.slot_in_subframe_count * frame.symbol_per_slot *bitwidth*1000
     elif const.split == 'E': # splitting at E
 
         # fs=1/Ts
         fs = SampleRate
         # fs =1.536*BW
-        MH = fs * 2 * const.bits_per_sample * const.antennas_per_ru
+        fronthaul_bitrate = fs * 2 * const.bits_per_sample * const.antennas_per_ru
     elif const.split ==15:
-        MH = 151
-    return MH
+        fronthaul_bitrate = 151
+    return fronthaul_bitrate
 
 
 
@@ -33,8 +36,15 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
 
     # switching delay (unit:microsecond)
     Dse = const.packet_size_bits / const.switch_bit_rate
-
-
+    if(const.modulation_compression == False):
+        bitwidth = 32
+    else:
+        if(const.modulation_index == 8):
+            bitwidth=8
+        elif(const.modulation_index == 6):
+            bitwidth =6
+        elif(const.modulation_index == 4):
+            bitwidth = 4
 
 
 
@@ -46,7 +56,8 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
     ##to be more accurate (micro seconds)
     Ts = frame.symbol_duration
 
-    MHbitRate1 = Fronthaul_bit_rate_calculater(Nsc, Ts, const, SampleRate)
+    # MHbitRate1 = Fronthaul_bit_rate_calculater(Nsc, Ts, const, SampleRate)
+    MHbitRate1 = Fronthaul_bit_rate_calculater(Nsc, frame, const,bitwidth)
 
     # MHbitRate1 = MHbitRate(Nsc, Ts, nn, split,Nant,nmod)
     # queuing delay
