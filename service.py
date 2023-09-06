@@ -25,16 +25,16 @@ def data_generator(transfer_interval,first_instant,test_interval):
 
 
 class Service:
-    def __init__(self, user_count, subcarier_count):
+    def __init__(self, user_count, prb_count):
         self.user_count = user_count
-        self.subcarier_count = subcarier_count
-        self._subcarier_user = None
+        self.prb_count = prb_count
+        self._prb_per_user_count = None
     @property
-    def subcarier_user(self):
-        if self._subcarier_user == None:
-            self._subcarier_user = math.floor(self.subcarier_count/self.user_count)
+    def prb_per_user_count(self):
+        if self._prb_per_user_count == None:
+            self._prb_per_user_count = math.floor(self.prb_count/self.user_count)
             #assume BW is uniformly distributed between users
-        return self._subcarier_user
+        return self._prb_per_user_count
     @property
     def user_count(self):
         return self._user_count
@@ -46,14 +46,14 @@ class Service:
 
 
     @property
-    def subcarier_count(self):
-        return self._subcarier_count
+    def prb_count(self):
+        return self._prb_count
 
 
-    @subcarier_count.setter
-    def subcarier_count(self, subcarier_count):
-        self._subcarier_count_per_user = None
-        self._subcarier_count = subcarier_count
+    @prb_count.setter
+    def prb_count(self, prb_count):
+        self._prb_per_user_count = None
+        self._prb_count = prb_count
 
 
 
@@ -61,16 +61,21 @@ class Service:
 
 #refer to service 5 in notebook
 class Service_urllc(Service):
-    def __init__(self, user_count, subcarier_count,test_interval):
-        super().__init__(user_count, subcarier_count)
+    def __init__(self, user_count, prb_count,test_interval):
+        super().__init__(user_count, prb_count)
         #constant message size
-        self.file_size = 80 #20bytes
+        self.file_size = 160 #20bytes
         self._target_transfer_interval_value = None
         self.user_count = user_count
         self.test_interval = test_interval #in milisoconds
         self._message_arival_time = None
         self._time_info = None
+        self._slot_per_user = None
 
+    @property
+    def slot_per_user(self):
+        self._slot_per_user = math.floor(self.file_size/1)
+        return self._slot_per_user
 
     @property
     def time_info(self):
@@ -130,8 +135,8 @@ class Service_urllc(Service):
 
 
 class Service_embb(Service):
-    def __init__(self, user_count, subcarier_count,test_interval,min_bitrate):
-        super().__init__(user_count, subcarier_count)
+    def __init__(self, user_count, prb_count,test_interval,min_bitrate):
+        super().__init__(user_count, prb_count)
         #constant message size
         self._file_size = None #20bytes
         self.E2E_delay_threshold = 10 # unit:milisecond
@@ -179,19 +184,22 @@ class Service_embb(Service):
         self._min_bitrate = min_bitrate
 
 
-
-vv = Service(3, 201)
-vv.user_count =4
-
-print(vv.subcarier_user)
-
+#
+# vv = Service(3, 201)
+# vv.user_count =4
+# #
+# print(vv.subcarier_user)
+#
 ser = Service_urllc(15,200,100)
 print(ser.target_transfer_interval_value)
-print(ser.target_transfer_interval_value)
+ser.user_count= 500
 
-# k = ser.message_arival_time
-print(ser.message_arival_time)
+# print(ser.target_transfer_interval_value)
+#
+k = ser.message_arival_time
+print(k.to_string())
+# print(ser.message_arival_time)
 # for i in range(15):
 #     print(k.loc[i].to_string())
-# print(pd.DataFrame(np.zeros((ser.user_count, ser.test_interval)), columns=list(np.arange(100))))
-print(ser.time_info)
+# # print(pd.DataFrame(np.zeros((ser.user_count, ser.test_interval)), columns=list(np.arange(100))))
+# print(ser.time_info)

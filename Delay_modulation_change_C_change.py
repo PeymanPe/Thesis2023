@@ -45,7 +45,7 @@ def DelayChangeBW(frame, n_subcar, C_percent, const, modulation_idx):
     if const.split == 'IID':
         # frac_CC = (np.sum(cj[-5:])*user*ru)/(np.sum(cj[-5:])*user*ru+cj[-6])
         frac_CC = 0.5
-        ceq_CC2 = np.array([1 - frac_CC, frac_CC]) * const.ceq_CC * C_percent #previously c percent was not used
+        ceq_CC2 = np.array([1 - frac_CC, frac_CC/ const.user_count]) * const.ceq_CC * C_percent #previously c percent was not used
         ceq_RU2 = np.array([1, 0]) * const.ceq_RU * C_percent
 
     elif const.split == 'ID':
@@ -91,8 +91,6 @@ for i in range(len(x1)):
     y1[i, 2] = DelayChangeBW(frame, n_subcar, x1[i], const, const.modulation_index)
     const.modulation_index = 8
     y1[i, 3] = DelayChangeBW(frame, n_subcar, x1[i], const, const.modulation_index)
-    # y1[i, :] = DelayChangeBW(p, math.floor(n_subcar_max/2), x1[i], Lf)[:-1]
-    # print(x1[i])
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
