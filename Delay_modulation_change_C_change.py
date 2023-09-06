@@ -45,10 +45,10 @@ def DelayChangeBW(frame, n_subcar, C_percent, const, modulation_idx):
     if const.split == 'IID':
         # frac_CC = (np.sum(cj[-5:])*user*ru)/(np.sum(cj[-5:])*user*ru+cj[-6])
         frac_CC = 0.5
-        ceq_CC2 = np.array([1 - frac_CC, frac_CC]) * const.ceq_CC
+        ceq_CC2 = np.array([1 - frac_CC, frac_CC/ const.user_count]) * const.ceq_CC * C_percent #previously c percent was not used
         ceq_RU2 = np.array([1, 0]) * const.ceq_RU * C_percent
 
-    elif const.split == 11:
+    elif const.split == 'ID':
         frac_RU = (cj[-5] * const.user_count) / (cj[-5] * const.user_count + np.sum(cj[:-5]))
         ceq_RU2 = np.array([1 - frac_RU, frac_RU]) * const.ceq_RU
         ceq_CC2 = np.array([0, 1]) * const.ceq_CC * C_percent
@@ -91,8 +91,6 @@ for i in range(len(x1)):
     y1[i, 2] = DelayChangeBW(frame, n_subcar, x1[i], const, const.modulation_index)
     const.modulation_index = 8
     y1[i, 3] = DelayChangeBW(frame, n_subcar, x1[i], const, const.modulation_index)
-    # y1[i, :] = DelayChangeBW(p, math.floor(n_subcar_max/2), x1[i], Lf)[:-1]
-    # print(x1[i])
 
 fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
@@ -105,7 +103,7 @@ ax.plot(x2, y1[:, 3], 'o-b')
 # ax.text(3.5, 1.25, 'processing time threshold', fontsize=8, color='r')
 
 ax.set_title(
-    "Delay components with varying allocated digital units for a slice, miu=0 File size=5 KB with slice\n containing 5 users and slice BW is half of channel BW and fully loaded ")
+    "Total Delay with varying allocated digital units for a slice, miu=0 File size=5 KB with slice\n containing 5 users and slice BW is half of channel BW and fully loaded ")
 
 ax.set(xlabel='Virtual machine limit(percentage) for the slice', ylabel='Total delay (ms)')
 ax.legend(('QPSK', '16QAM', '64QAM','256QAM'), loc='upper right', shadow=True)

@@ -80,6 +80,7 @@ x2=np.array(["{:.0%}".format(i) for i in x1])
 y1 = np.empty([len(x1), 5])
 for i in range(len(x1)):
     y1[i, :] = DelayChangeBW(frame, n_subcar, x1[i], const)[:-1]
+
     # y1[i, :] = DelayChangeBW(p, math.floor(n_subcar_max/2), x1[i], Lf)[:-1]
     # print(x1[i])
 

@@ -16,6 +16,7 @@ class Frame:
         # if FR is true, the carrier frequncy is below 6GHz otherwise above 24 GHz
         self.is_FR_one = is_FR_one
         self.BW = BW
+        self.symbol_per_slot = 14
         #lOOK AT tableI switched ethernet fronthaul architecture for cloud-radio access networks
         self._sample_rate = None
         # SCS in kHZ
@@ -26,6 +27,7 @@ class Frame:
 
         self._symbol_duration = None #microseconds
         self._slot_in_frame_count = None
+        self._slot_in_subframe_count = None
         self._max_prb_count = None
     @property
     def sample_rate(self):
@@ -48,6 +50,11 @@ class Frame:
             self._slot_in_frame_count = 10 * np.power(2, self.mu)
         return self._slot_in_frame_count
     @property
+    def slot_in_subframe_count(self):
+        if self._slot_in_subframe_count == None:
+            self._slot_in_subframe_count = np.power(2, self.mu)
+        return self._slot_in_subframe_count
+    @property
     def symbol_duration(self):
         if self._symbol_duration == None:
             self._symbol_duration = 66.67 / np.power(2, self.mu)
@@ -69,6 +76,7 @@ class Frame:
         self._slot_duration = None
         self._symbol_duration = None
         self._slot_in_frame_count = None
+        self._slot_in_subframe_count = None
         self._max_prb_count = None
         self._mu = mu
 

@@ -46,6 +46,8 @@ class Constants:
         # Number of instructions per CPU cycle
         self.instructions_per_cycle = 16
 
+        self.modulation_compression = False
+
         # C_i values is calculated here based on specified senario
 
         df = pd.read_excel(r'D:\Autonomous Systems\KTH\Thesis\New simulation\Data\table2ref.xlsx')
