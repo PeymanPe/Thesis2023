@@ -45,7 +45,8 @@ def Total_Delay_Calculator(const, Nsc, frame, cj, cRUEq, cCCEq):
             bitwidth =6
         elif(const.modulation_index == 4):
             bitwidth = 4
-
+        elif(const.modulation_index == 2):
+            bitwidth = 2
 
 
 

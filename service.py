@@ -1,6 +1,7 @@
 import math
 import pandas as pd
 import numpy as np
+from Constants import Constants
 
 
 from numpy import random
@@ -10,15 +11,16 @@ def poisson_dist(x,y):
 
 
 
-def data_generator(transfer_interval,first_instant,test_interval):
+def data_generator(transfer_interval,first_instant,test_interval, slot_per_user):
 
     data_generated = np.zeros(test_interval)
     for i in range(test_interval):
         if (i == first_instant) :
-            data_generated[i] = 1
+            # data_generated[i] = 1
+            data_generated[i:(slot_per_user+i)] = 1
         if (i > first_instant):
             if((i-first_instant) % transfer_interval == 0):
-                data_generated[i] = 1
+                data_generated[i:(slot_per_user+i)] = 1
     return data_generated
 
 
@@ -61,20 +63,23 @@ class Service:
 
 #refer to service 5 in notebook
 class Service_urllc(Service):
-    def __init__(self, user_count, prb_count,test_interval):
+    def __init__(self, user_count, prb_count,test_interval,const):
         super().__init__(user_count, prb_count)
         #constant message size
-        self.file_size = 160 #20bytes
+        self.file_size = 1600 #20bytes
         self._target_transfer_interval_value = None
         self.user_count = user_count
         self.test_interval = test_interval #in milisoconds
         self._message_arival_time = None
+        # self._prb_map = np.zero(self._test_interval)
+        # self._prb_allocation_map = np.zero(self._test_interval)
         self._time_info = None
         self._slot_per_user = None
+        self.const = const
 
     @property
     def slot_per_user(self):
-        self._slot_per_user = math.floor(self.file_size/1)
+        self._slot_per_user = math.ceil(self.file_size/(self._prb_per_user_count * 12 * self.const.modulation_index * self.const.nsymbol))
         return self._slot_per_user
 
     @property
@@ -90,11 +95,25 @@ class Service_urllc(Service):
             return self._message_arival_time
         if self._message_arival_time == None:
             # self._message_arival_time = self._target_transfer_interval_value.apply(lambda x: pd.Series(data_generator(x,self.test_interval)))
-            self._message_arival_time = self._time_info.apply(lambda x: pd.Series(data_generator(x['target transfer interval'],x['arrival time'], self.test_interval)), axis=1)
-            self._message_arival_time.columns = list('t'+str(i) for i in np.arange(100))
+            self._message_arival_time = self._time_info.apply(lambda x: pd.Series(data_generator(x['target transfer interval'],x['arrival time'], self.test_interval, self._slot_per_user)), axis=1)
+            self._message_arival_time.columns = list('t'+str(i) for i in np.arange(self._test_interval))
             return self._message_arival_time
 
-
+    # @property
+    # def prb_allocation_map(self):
+    #     if isinstance(self._prb_allocation_map, pd.Series):
+    #         return self._prb_allocation_map
+    #     else:
+    #         if self._prb_allocation_map == None:
+    #             self._prb_allocation_map = self._message_arival_time.copy()
+    #             for i in range(self._user_count):
+    #                 for j in range(self._test_interval):
+    #                     if(self._prb_allocation_map.iloc[i,j] == 1):
+    #                         for k in range(self._slot_per_user):
+    #                             if j+k< self._test_interval:
+    #                                 self._prb_allocation_map.iloc[i, j+k]=1
+    #
+    #         return self._prb_allocation_map
     @property
     def target_transfer_interval_value(self):
         if isinstance(self._target_transfer_interval_value, pd.Series):
@@ -122,7 +141,15 @@ class Service_urllc(Service):
         self._target_transfer_interval_value = None
         self._message_arival_time = None
         self._time_info = None
+        # self._prb_allocation_map = None
 
+    @property
+    def const(self):
+        return self._const
+
+    @const.setter
+    def const(self, const):
+        self._const = const
 
     @property
     def test_interval(self):
@@ -184,22 +211,20 @@ class Service_embb(Service):
         self._min_bitrate = min_bitrate
 
 
-#
-# vv = Service(3, 201)
-# vv.user_count =4
-# #
-# print(vv.subcarier_user)
-#
-ser = Service_urllc(15,200,100)
-print(ser.target_transfer_interval_value)
-ser.user_count= 500
 
+# const = Constants()
+# ser = Service_urllc(15,30,100,const)
 # print(ser.target_transfer_interval_value)
 #
-k = ser.message_arival_time
-print(k.to_string())
-# print(ser.message_arival_time)
-# for i in range(15):
-#     print(k.loc[i].to_string())
-# # print(pd.DataFrame(np.zeros((ser.user_count, ser.test_interval)), columns=list(np.arange(100))))
-# print(ser.time_info)
+#
+# # print(ser.target_transfer_interval_value)
+# #
+# ser.prb_per_user_count
+# print(ser.slot_per_user)
+# k = ser.message_arival_time
+# prb_map = np.zeros(100)
+# for i in range(100):
+#     prb_map[i] = k['t'+str(i)].sum()
+#
+# print(prb_map)
+# print(k.to_string())

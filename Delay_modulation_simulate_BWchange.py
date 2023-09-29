@@ -83,6 +83,7 @@ x3=x3/n_subcar_max
 x2=np.array(["{:.0%}".format(i) for i in x3])
 
 y1 = np.empty([len(x1), 3])
+const.modulation_compression = True
 const.modulation_index=8
 for i in range(len(x1)):
     y1[i, 0] = DelayChangeBW(frame, x1[i], C_percent, const,const.modulation_index)[3]

@@ -80,6 +80,7 @@ C_percent = 0.3
 
 delay = np.empty([3, 6])
 
+const.modulation_compression = True
 
 const.modulation_index = 4
 delay[0, :] = DelayChangeBW(frame, n_subcar, C_percent, const, const.modulation_index)

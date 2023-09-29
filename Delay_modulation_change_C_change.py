@@ -65,6 +65,7 @@ def DelayChangeBW(frame, n_subcar, C_percent, const, modulation_idx):
 
 
 const= Constants()
+const.modulation_compression = True
 numerology=0
 bandwidth =20
 frame = Frame(numerology, True, bandwidth)
@@ -80,7 +81,6 @@ C_percent = 0.1
 # x1 = np.arange(50, n_subcar_max, 20)
 x1 = np.linspace(0.05, 0.5, num=30)
 x2=np.array(["{:.0%}".format(i) for i in x1])
-
 y1 = np.empty([len(x1), 4])
 for i in range(len(x1)):
     const.modulation_index =2

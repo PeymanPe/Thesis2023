@@ -62,7 +62,8 @@ class Constants:
         # Number of users
         self.user_count = 5
         # number of radio units
-        self.ru_count = 4
+        self.ru_count = 1
+        # self.ru_count = 4
         # file size(each user) 0.5kB
         self.file_size = 5 * 8 #0.5
         # assumption 20Mhz channel miu=0 , FR1
