@@ -9,9 +9,9 @@ class Frame:
         # the number of raw shows the miu
         #each number shows maximum number PRB at specified numerology
 
-        self.FR1_dataframe = pd.read_excel(r'D:\Autonomous Systems\KTH\Thesis\Implementation\Data\Max.xlsx')
+        self.FR1_dataframe = pd.read_excel('prb_FR_one.xlsx')
         # same file as the aformentioned but regarding to carrier frequency above 24 GHz
-        self.FR2_dataframe = pd.read_excel(r'D:\Autonomous Systems\KTH\Thesis\Implementation\Data\Max2.xlsx')
+        self.FR2_dataframe = pd.read_excel('prb_FR_one.xlsx')
         self.mu = mu
         # if FR is true, the carrier frequncy is below 6GHz otherwise above 24 GHz
         self.is_FR_one = is_FR_one
@@ -102,7 +102,9 @@ class Frame:
 
 
 
-# frame = Frame(0, True, 30)
+frame = Frame(0, True, 30)
+print(frame.FR1_dataframe)
+print(frame.max_prb_count)
 #
 # print(frame.slot_in_frame_count)
 

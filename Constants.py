@@ -50,7 +50,7 @@ class Constants:
 
         # C_i values is calculated here based on specified senario
 
-        df = pd.read_excel(r'D:\Autonomous Systems\KTH\Thesis\New simulation\Data\table2ref.xlsx')
+        df = pd.read_excel('compute_ref_values.xlsx')
         dff = df.values
         pd.DataFrame(dff).to_numpy()
         self.dff = dff
