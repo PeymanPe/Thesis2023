@@ -18,7 +18,7 @@ power_DU_RU_max = 200
 
 services_count = 3
 
-def processing_gops_calculator(modulation_idx,frame,service):
+def processing_gops_calculator(modulation_idx,frame,service,const):
 
     cj2 = const.dff[:, 0]
     cj = np.copy(cj2)
@@ -55,8 +55,11 @@ def service_energy_calculater(service,frame,const,provided_processing):
     energy_RU = 0
     energy_central_cloud = 0
     prb_allocatiom_map = service.message_arival_time
-    required_procsess = processing_gops_calculator(const.modulation_index,frame,service)
+    required_procsess = processing_gops_calculator(const.modulation_index,frame,service,const)
     # print(service.target_transfer_interval_value)
+    energy_RU = np.zeros(const.ru_count)
+    energy_ran = np.zeros(const.ru_count)
+    energy_process_ru = np.zeros(const.ru_count)
     for i in range(service.test_interval):
 
         total_file_size = 0
@@ -70,7 +73,9 @@ def service_energy_calculater(service,frame,const,provided_processing):
             total_active_user_in_a_service += active_users_count
             print(service.prb_per_user_count)
             print(active_users_count)
-            energy_RU += (active_users_count * service.prb_per_user_count * power_transmission_per_subcarier + power_DU_RU) * frame.slot_duration
+            energy_ran[j] += active_users_count * service.prb_per_user_count * power_transmission_per_subcarier * frame.slot_duration
+            energy_process_ru[j] += power_DU_RU * frame.slot_duration
+            energy_RU[j] = energy_ran[j]+energy_process_ru[j]
 
         total_file_size = total_active_user_in_a_service * service.prb_per_user_count * const.modulation_index * const.nsymbol
         power_switching = (
@@ -82,30 +87,35 @@ def service_energy_calculater(service,frame,const,provided_processing):
         power_DU_central_cloud = power_DU_central_cloud_min + (power_DU_central_cloud_max-power_DU_central_cloud_min)*\
                                  utility_factor_central_cloud
         energy_central_cloud += (power_DU_central_cloud + power_cooling_central_cloud + power_switching) * frame.slot_duration
-    total_energy = energy_RU + energy_central_cloud
+    total_energy = energy_RU.sum() + energy_central_cloud
 
+    energy_elements = np.array([total_energy, energy_central_cloud, energy_RU[0], power_DU_central_cloud * frame.slot_duration,
+              power_switching * frame.slot_duration])
+    # energy_elements = np.array([total_energy, energy_central_cloud])
+    return total_energy, energy_central_cloud, energy_RU ,power_DU_central_cloud * frame.slot_duration, \
+        power_cooling_central_cloud * frame.slot_duration, power_switching * frame.slot_duration,energy_ran,energy_process_ru
 
-    return np.array([total_energy , energy_central_cloud , energy_RU, power_DU_central_cloud,power_switching])
-
-numerology=0
-bandwidth =20
-const = Constants()
-
-frame = Frame(numerology, True, bandwidth)
-test_duration=100
-prb_count = math.ceil(frame.max_prb_count * 0.7)
-user_count=15
-ser = Service_urllc(user_count,prb_count,test_duration,const)
-print(ser.target_transfer_interval_value)
-ser.prb_per_user_count
-print(ser.slot_per_user)
-
-provided_processing_cloud = 2000
-provided_processing_cloud_percentage = 0.5
-provided_processing_cloud_cp = provided_processing_cloud * provided_processing_cloud_percentage
-
-provided_processing_cloud_up = provided_processing_cloud * (1 - provided_processing_cloud_percentage)/ser.user_count
-provided_processing = np.array([300,0, 1000,])
-print(service_energy_calculater(ser,frame,const,provided_processing))
+#
+# numerology=0
+# bandwidth =20
+# const = Constants()
+#
+# frame = Frame(numerology, True, bandwidth)
+# test_duration=100
+# prb_count = math.ceil(frame.max_prb_count * 0.7)
+# user_count=15
+# ser = Service_urllc(user_count,prb_count,test_duration,const)
+# print(ser.target_transfer_interval_value)
+# ser.prb_per_user_count
+# print(ser.slot_per_user)
+#
+# provided_processing_ru = 300
+# provided_processing_cloud = 2000
+# provided_processing_cloud_percentage = 0.5
+# provided_processing_cloud_cp = provided_processing_cloud * provided_processing_cloud_percentage
+#
+# provided_processing_cloud_up = provided_processing_cloud * (1 - provided_processing_cloud_percentage)/ser.user_count
+# provided_processing = np.array([provided_processing_ru,0, provided_processing_cloud_cp,provided_processing_cloud_up])
+# print(service_energy_calculater(ser,frame,const,provided_processing))
 
 
